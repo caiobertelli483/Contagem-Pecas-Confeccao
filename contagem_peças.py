@@ -5,7 +5,7 @@ from datetime import datetime
 # ----------------------------------------------------------------------
 # URL do banco PostgreSQL do Render (External Database URL)
 # ----------------------------------------------------------------------
-DATABASE_URL = "postgresql://seu_usuario:seu_senha@seu_host.render.com:5432/contagem-pecas"
+DATABASE_URL = "postgresql://contagem_pecas_user:tNaqE77LPjDETlvsJVtbB902R3oAvTFh@dpg-d62usc4r85hc739tpvp0-a.oregon-postgres.render.com/contagem_pecas"
 
 # Parse da URL
 result = urllib.parse.urlparse(DATABASE_URL)

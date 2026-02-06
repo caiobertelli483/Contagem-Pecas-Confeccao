@@ -1,0 +1,10 @@
+🖥️ PC LOCAL 
+└── contagem_peças.py     ← leitura do codigo de barras
+    └── Salva direto no PostgreSQL
+
+☁️ RENDER (virtual)
+├── app.py               ← dashboard
+└── requirements.txt     
+
+🗄️ POSTGRESQL (Render)
+└── Tabela "contagem"     ← criado pelo app.py

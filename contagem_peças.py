@@ -5,6 +5,7 @@ import urllib.parse
 from datetime import datetime
 import time
 import numpy as np
+from leitor_relatorio import TOTALS
 
 # ----------------------------------------------------------------------
 # CONFIGURAÇÕES
@@ -13,7 +14,8 @@ DATABASE_URL = "postgresql://contagem_pecas_user:tNaqE77LPjDETlvsJVtbB902R3oAvTF
 
 JANELA_DUP_SEG = 3
 ultimas_leituras = {}
-
+hoje = datetime.now().strftime("%Y-%m-%d")
+totais_dia = {}
 # Parse da URL do banco
 result = urllib.parse.urlparse(DATABASE_URL)
 host = result.hostname
@@ -45,6 +47,12 @@ def salvar_peca(modelo, tamanho, cor):
     cur.close()
     conn.close()
 
+    global totais_dia, hoje
+    modelo_key = modelo.replace(" ", "_")[:15]
+    if hoje not in totais_dia:
+        totais_dia[hoje] = {}
+    totais_dia[hoje][modelo_key] = totais_dia[hoje].get(modelo_key, 0) + 1
+
 def main():
     print("🎥 Leitor de Código de Barras - PC LOCAL")
     print("Produtos cadastrados:")
@@ -62,7 +70,31 @@ def main():
         ret, frame = cap.read()
         if not ret:
             break
-            
+        cur = conn.cursor()
+cur.execute("""
+    CREATE TABLE IF NOT EXISTS contagem (
+        modelo TEXT, tamanho TEXT, cor TEXT, 
+        contagem INTEGER, data TEXT
+    )
+""")
+conn.commit()
+
+# DADOS TESTE
+cur.execute("SELECT COUNT(*) FROM contagem")
+if cur.fetchone()[0] == 0:
+    teste = [
+        ("TANGA FIO DUPLO BELA FLOR", "PP", "PRETO", 15, "2026-02-06 09:15"),
+        ("TANGA FIO DUPLO BELA FLOR", "PP", "DIVINO", 8, "2026-02-06 10:30"),
+        ("TANGA FIO DUPLO BELA FLOR", "P", "PRETO", 22, "2026-02-06 14:20"),
+        ("TANGA FIO DUPLO BELA FLOR", "M", "BRANCO", 5, "2026-02-06 16:45"),
+    ]
+    for row in teste:
+        cur.execute("INSERT INTO contagem VALUES (%s,%s,%s,%s,%s)", row)
+    conn.commit()
+    st.success("✅ Dados de teste inseridos!")
+
+cur.close()    
+
         # Detectar códigos
         barcodes = pyzbar.decode(frame)
         codigo_ok = None

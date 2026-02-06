@@ -1,5 +1,12 @@
+# Projeto: Contagem de Peças com Streamlit + Webcam + PostgreSQL
+
 streamlit==1.54.0
 plotly==5.20.0
 pandas>=2.0.0
 psycopg2-binary>=2.9.0
 urllib3
+
+# Para leitura de código de barras com webcam
+opencv-python==4.9.0.80
+pyzbar==0.1.9
+numpy>=1.24.0
